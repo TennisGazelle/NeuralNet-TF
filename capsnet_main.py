@@ -13,6 +13,7 @@ epsilon = 1e-9
 init_sigma = 0.1
 batch_size = None
 
+
 def preview_mnist(mnist, n_samples = 5):
     plt.figure(figsize=(n_samples*2, 3))
     for i in range(n_samples):
@@ -112,12 +113,12 @@ if __name__ == '__main__':
     print(caps2_prediction)
 
     ### ROUTING BY AGREEMENT ### MAIN ALGORITHM IN PAPER ###
-    # start loop here
     b_weights = tf.zeros(shape=[tf.shape(X)[0], primary_caps_n_caps, digit_caps_n_caps, 1, 1], dtype=np.float32, name="b_raw_weights")
     # these weights have extra dimensions so that it will match with the caps2_prediction sizes
     # this way, these will use TF's built in BROADCASTING function
 
     # round 1 (we will loop this later)
+    # start loop here
     c_weights = tf.nn.softmax(b_weights, axis=2, name="c_weights")
     # s = sum( c_ij*u_hat_ji ) across i
     all_predictions = tf.multiply(c_weights, caps2_prediction, name="all_predictions")
