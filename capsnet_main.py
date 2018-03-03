@@ -133,3 +133,10 @@ if __name__ == '__main__':
     scalar_products = tf.matmul(caps2_prediction, digit_caps_output_tiled, transpose_a=True, name="agreement")
     b_weights = tf.add(b_weights, scalar_products, name="b_weights")
     # end loop here
+
+    ### GET CLASS GUESS ### ESTIMATED CLASS PROBABIILITIES (LENGTH) ###
+    y_probability = safe_norm(vector=digit_caps_output, axis=-2, name="y_probability")
+    print(y_probability)  # to double check the dimensions
+    y_argmax = tf.argmax(y_probability, axis=2, name="y_probability")
+    print(y_argmax)       # to double check the argmax
+
