@@ -137,6 +137,17 @@ if __name__ == '__main__':
     ### GET CLASS GUESS ### ESTIMATED CLASS PROBABIILITIES (LENGTH) ###
     y_probability = safe_norm(vector=digit_caps_output, axis=-2, name="y_probability")
     print(y_probability)  # to double check the dimensions
+
     y_argmax = tf.argmax(y_probability, axis=2, name="y_probability")
     print(y_argmax)       # to double check the argmax
+    # let's get rid of dimensions that have size 1 (since we have the index of the vector that we like
+    y_pred = tf.squeeze(y_argmax, axis=[1,2], name"y_pred")
+
+    # placeholder for the labels
+    y = tf.placeholder(shape=[None], dtype=tf.int64, name="y")
+
+    # since y will contain the digit classes (from 0 to 9), to get T_k for every class instance...
+    T = tf.one_hot(y, depth=digit_caps_n_caps, name="T")
+
+    
 
