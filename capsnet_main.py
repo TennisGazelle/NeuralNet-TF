@@ -209,7 +209,7 @@ def make_model():
     total_loss = tf.add(margin_loss, alpha * reconstruction_loss, name="total_loss")
     print(total_loss)
 
-    ### SAVE ACCURACY ### TRAIN ### ADD SAVER
+    ### SAVE ACCURACY ### TRAIN ### ADD SAVER ###
     num_correct = tf.equal(y, y_pred, name="num_correct")
     accuracy = tf.reduce_mean(tf.cast(num_correct, tf.float32), name="accuracy")
     optimizer = tf.train.AdamOptimizer()
@@ -229,5 +229,32 @@ if __name__ == '__main__':
     batch_size = 50
     restore_checkpoint = True
 
+    n_iterations_per_epoch = mnist.train.num_examples // batch_size  # '//' is floordiv()
+    n_iterations_validation = mnist.validation.num_examples // batch_size
+    best_loss_val = np.infty
+    checkpoint_path = "./capsnet_checkpoint"
 
+    with tf.Session() as sess:
+        if restore_checkpoint and tf.train.checkpoint_exists(checkpoint_path):
+            saver.restore(sess, checkpoint_path)
+        else:
+            init.run()
+
+        for epoch in range(n_epochs):
+            for iter in range(1, n_iterations_per_epoch + 1):
+                X_batch, Y_batch = mnist.train.next_batch(batch_size)
+                # run the training operations and measure the loss  for this
+                _, loss_train = sess.run(
+                    [training_op, total_loss],
+                    feed_dict={
+                        X: X_batch.reshape([-1, 28, 28, 1]),
+                        Y: Y_batch,
+                        mask_with_labels: True
+                    }
+                )
+                print ("\rIteration: {}/{} ({:.1f}%)  Loss: {:.5f}".format(
+                    iter, n_iterations_per_epoch,
+                    iter * 100 / n_iterations_per_epoch,
+                    loss_train
+                ), end="")
 
